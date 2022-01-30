@@ -7,3 +7,6 @@ This project runs Vite in two configurations.
 - `/build/lib/index.js`
 - `/build/lib/style.css`
 
+# Hubs rooms
+
+[Development](https://hubs.aelatgt.net/CWsexjb/hidden-glorious-camp)
