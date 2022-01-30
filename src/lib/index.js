@@ -1,14 +1,14 @@
 // Tailwind stylesheet
-import "@/styles/style.css";
+import "@/styles/style.css"
 
 // Hubs components
-import "./hubs/presence-notifications";
-import "./hubs/counter";
-import "./hubs/text-input";
+import "./hubs/presence-notifications"
+import "./hubs/counter"
+import "./hubs/text-input"
 
-const { APP } = window;
+const { APP } = window
 
-APP.scene.setAttribute('presence-notifications', '')
+APP.scene.setAttribute("presence-notifications", "")
 
 // const el = document.createElement("a-entity");
 // el.object3D.position.y = 1.5;

@@ -11,9 +11,7 @@ AFRAME.registerComponent("web-layer-events", {
     const layer = this.el.components["web-layer"].layer
 
     // Left and right cursor components (mouse acts as right cursor on desktop)
-    const cursorControllers = [...document.querySelectorAll("[cursor-controller]")].map(
-      (el) => el.components["cursor-controller"]
-    )
+    const cursorControllers = [...document.querySelectorAll("[cursor-controller]")].map((el) => el.components["cursor-controller"])
 
     // Set up Ethereal's interactionRays for hover states
     layer.interactionRays = cursorControllers.map((cursorController) => cursorController.raycaster.ray)
