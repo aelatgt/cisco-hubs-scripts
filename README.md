@@ -7,6 +7,13 @@ This project runs Vite in two configurations.
 - `/build/lib/index.js`
 - `/build/lib/style.css`
 
+Ultimately, `room.js` is the room script for Hubs which imports our JS bundle along with external libraries.
+
+# Room script
+
+[Development](https://mattrossman.ngrok.io/lib/room.js)
+[Production](https://www.aelatgt.org/cisco-hubs-scripts/lib/room.js)
+
 # Hubs rooms
 
 [Development](https://hubs.aelatgt.net/CWsexjb/cisco-development)
