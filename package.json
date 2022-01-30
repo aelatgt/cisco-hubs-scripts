@@ -3,8 +3,13 @@
   "version": "0.0.1",
   "main": "server.js",
   "scripts": {
-    "dev": "concurrently \"vite\" \"vite build --watch --mode development --config vite.config.lib.js\"",
-    "build": "vite build && vite build --config vite.config.lib.js",
+    "dev": "concurrently \"npm:dev:app\" \"npm:dev:lib\"",
+    "dev:app": "vite",
+    "dev:lib": "LIB=TRUE vite build --watch --mode development --config vite.config.lib.js",
+    "build:app": "vite build",
+    "build:lib": "LIB=TRUE vite build --config vite.config.lib.js",
+    "build": "yarn build:app && yarn build:lib",
+    "prebuild": "rm -rf public/lib",
     "tunnel": "ngrok http 3000 --subdomain mattrossman"
   },
   "dependencies": {
