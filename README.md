@@ -9,4 +9,5 @@ This project runs Vite in two configurations.
 
 # Hubs rooms
 
-[Development](https://hubs.aelatgt.net/CWsexjb/hidden-glorious-camp)
+[Development](https://hubs.aelatgt.net/CWsexjb/cisco-development)
+[Production](https://hubs.aelatgt.net/2cYwtQW/cisco-production/)
