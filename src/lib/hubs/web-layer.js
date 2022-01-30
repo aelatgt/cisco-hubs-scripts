@@ -19,7 +19,9 @@ AFRAME.registerComponent("web-layer", {
     // Stylesheet
     const linkEl = document.createElement("link")
     linkEl.rel = "stylesheet"
-    linkEl.href = "https://cisco-hubs-scripts.glitch.me/lib/style.css"
+    linkEl.href = import.meta.DEVELOPMENT
+      ? "https://mattrossman.ngrok.io/lib/style.css"
+      : "https://www.aelatgt.org/cisco-hubs-scripts/lib/style.css"
     this.layerEl.appendChild(linkEl)
     console.log("adding weblayer stylesheet:", linkEl.href)
 

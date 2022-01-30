@@ -25,7 +25,7 @@ function App() {
     <>
       <PreviewSplit>
         <Counter state={state} setState={setState} />
-        <link rel="stylesheet" href="/lib/style.css" />
+        <link rel="stylesheet" href="./lib/style.css" />
       </PreviewSplit>
       <LinksWidget />
     </>
