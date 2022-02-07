@@ -5,6 +5,7 @@ import "@/styles/style.css"
 import "./hubs/presence-notifications"
 import "./hubs/counter"
 import "./hubs/text-input"
+import "./hubs/collision-events"
 
 const { APP } = window
 

@@ -1,4 +1,5 @@
 import { mount } from "@/lib/react/PresenceUI"
+import { HueLights } from "./HueLights"
 
 const { APP, AFRAME, THREE } = window
 
@@ -22,6 +23,20 @@ AFRAME.registerComponent("presence-notifications", {
 
     this.el.addEventListener("presenceconfig", (e) => {
       this.el.setAttribute("presence-notifications", e.detail)
+    })
+
+    // Lights
+    this.el.sceneEl.addEventListener("available_enter", () => {
+      console.log("available_enter")
+      this.setLights({ color: "green", brightness: 100 })
+    })
+    this.el.sceneEl.addEventListener("focus_enter", () => {
+      console.log("focus_enter")
+      this.setLights({ color: "orange", brightness: 100 })
+    })
+    this.el.sceneEl.addEventListener("collab_enter", () => {
+      console.log("collab_enter")
+      this.setLights({ color: "blue", brightness: 100 })
     })
 
     // Set up notification permissions
@@ -52,6 +67,14 @@ AFRAME.registerComponent("presence-notifications", {
         }
       }
     })
+  },
+  update: function () {
+    this.lights = this.data.key.length > 0 ? new HueLights(this.data.key) : null
+  },
+  setLights: function ({ color, brightness }) {
+    if (this.lights) {
+      this.lights.set({ color, brightness })
+    }
   },
   notify: function (body) {
     console.log(`[Notification] ${body}`)
