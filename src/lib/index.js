@@ -9,6 +9,7 @@ import "@/styles/style.css"
 import "./hubs/presence-zone"
 import "./hubs/config-panel"
 import "./hubs/hue-lights"
+import "./hubs/page-visibility"
 
 const { APP } = window
 
