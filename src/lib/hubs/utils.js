@@ -5,7 +5,7 @@
  * @param {string} baseComponent Name of the component whose dependencies should be modified
  * @param {string} dependentComponent Name of the component to inject in baseComponent's dependencies
  */
-export function injectDependency(baseComponent, dependentComponent) {
+export function registerDependency(baseComponent, dependentComponent) {
   AFRAME.components[baseComponent].dependencies ??= []
   AFRAME.components[baseComponent].dependencies.push(dependentComponent)
 }
@@ -16,7 +16,7 @@ export function injectDependency(baseComponent, dependentComponent) {
  * @param {string} name Name of the component to add to the "remote-avatar" NAF template
  * @param {string} value Initial value for the component
  */
-export function injectRemoteAvatarComponent(name, value) {
+export function registerNetworkedAvatarComponent(name, value) {
   // Attach component locally so we can control it (since attachTemplateToLocal=false on #remote-avatar)
   document.querySelector("#avatar-rig").setAttribute(name, value)
 

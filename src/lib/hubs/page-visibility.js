@@ -1,4 +1,4 @@
-import { injectRemoteAvatarComponent } from "./utils"
+import { registerNetworkedAvatarComponent } from "./utils"
 
 AFRAME.registerSystem("page-visibility", {
   init: function () {
@@ -20,4 +20,4 @@ AFRAME.registerComponent("networked-page-visibility", {
   },
 })
 
-injectRemoteAvatarComponent("networked-page-visibility", "")
+registerNetworkedAvatarComponent("networked-page-visibility", "")

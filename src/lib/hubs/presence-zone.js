@@ -1,5 +1,5 @@
 import "./hue-lights"
-import { injectDependency } from "./utils"
+import { registerDependency } from "./utils"
 
 AFRAME.registerSystem("presence-zone", {
   dependencies: ["hue-lights"],
@@ -77,4 +77,4 @@ AFRAME.registerComponent("presence-zone-member", {
 })
 
 AFRAME.GLTFModelPlus.registerComponent("presence-zone", "presence-zone")
-injectDependency("networked-avatar", "presence-zone-member")
+registerDependency("networked-avatar", "presence-zone-member")
