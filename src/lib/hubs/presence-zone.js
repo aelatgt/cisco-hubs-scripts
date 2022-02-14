@@ -1,9 +1,14 @@
+import "./hue-lights"
 import { injectDependency } from "./utils"
 
 AFRAME.registerSystem("presence-zone", {
+  dependencies: ["hue-lights"],
   init: function () {
     this.entities = new Set()
     this.activeZone = null
+    this.activeSize = 0
+    this.lights = this.el.systems["hue-lights"].lights
+    console.log("intitializing presence-zone system")
   },
   register: function (el) {
     this.entities.add(el)
@@ -12,7 +17,6 @@ AFRAME.registerSystem("presence-zone", {
     this.entities.delete(el)
   },
   tick: function () {
-    this.entities
     let maxSize = 0
     let maxActiveZone = null
     for (let zoneEl of this.entities) {
@@ -22,9 +26,11 @@ AFRAME.registerSystem("presence-zone", {
         maxActiveZone = zoneEl
       }
     }
-    if (maxActiveZone !== this.activeZone) {
+    if (maxActiveZone !== this.activeZone || maxSize !== this.activeSize) {
       this.activeZone = maxActiveZone
+      this.activeSize = maxSize
       if (maxActiveZone) {
+        this.lights.set({ brightness: 100, color: maxActiveZone.getAttribute("presence-zone").color })
         console.log(`${maxActiveZone.className} is most active with ${maxSize} members`)
       } else {
         console.log("No active zones")
