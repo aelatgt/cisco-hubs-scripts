@@ -6,6 +6,7 @@ import "./hubs/presence-notifications"
 import "./hubs/counter"
 import "./hubs/text-input"
 import "./hubs/collision-events"
+import "./hubs/presence-zone"
 
 const { APP } = window
 
