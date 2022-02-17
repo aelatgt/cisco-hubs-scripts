@@ -1,3 +1,6 @@
+// Import external libs here (not processed by Vite)
+import "https://cdn.jsdelivr.net/npm/ethereal@2.1.3/dist/ethereal.umd.js"
+
 // Tailwind stylesheet
 import "@/styles/style.css"
 

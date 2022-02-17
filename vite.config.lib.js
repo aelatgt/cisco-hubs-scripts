@@ -17,10 +17,10 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: mode === "development" ? "public/lib" : "build/lib",
+    target: "esnext",
     lib: {
       entry: "src/lib/index.js",
-      name: "AEL",
-      formats: ["umd"],
+      formats: ["es"],
       fileName: () => "index.js",
     },
     rollupOptions: {
