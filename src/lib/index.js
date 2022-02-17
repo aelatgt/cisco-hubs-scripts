@@ -13,8 +13,8 @@ import "./hubs/presence-zone"
 import "./hubs/config-panel"
 import "./hubs/hue-lights"
 import "./hubs/page-visibility"
-
-const { APP } = window
+import "./hubs/excalidraw"
+import "./hubs/debug"
 
 // APP.scene.setAttribute("presence-notifications", "")
 
