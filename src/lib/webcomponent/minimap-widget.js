@@ -1,6 +1,9 @@
 const html = String.raw
 const css = String.raw
 
+/**
+ * HTML
+ */
 const template = document.createElement("template")
 template.innerHTML = html`
   <div class="widget">
@@ -9,10 +12,18 @@ template.innerHTML = html`
     </div>
     <div id="collapsible">
       <canvas width="256" height="256"></canvas>
+      <div class="row" style="margin-bottom: 15px">
+        <button class="btnZoom" id="btnZoomOut">-</button>
+        <span>Zoom</span>
+        <button class="btnZoom" id="btnZoomIn">+</button>
+      </div>
     </div>
   </div>
 `
 
+/**
+ * CSS
+ */
 const style = css`
   :host {
     --hubs-blue: #007ab8;
@@ -32,12 +43,29 @@ const style = css`
   .row {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 6px;
+  }
+
+  .spacer {
+    height: 15px;
   }
 
   canvas {
     display: block;
-    margin-bottom: 15px;
+  }
+
+  .btnZoom {
+    --outline-color: var(--hubs-blue);
+    padding: 4px;
+    border-radius: 4px;
+    width: 30px;
+    background: none;
+    border: 2px solid var(--outline-color);
+    color: var(--hubs-blue);
+  }
+  .btnZoom:hover {
+    --outline-color: var(--hubs-lightblue);
   }
 
   button:enabled {
@@ -57,6 +85,10 @@ const style = css`
     overflow: hidden;
     transition: height 200ms ease-in-out;
     height: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
   }
 `
 
@@ -79,6 +111,9 @@ class MinimapWidget extends HTMLElement {
     btnCollapse.addEventListener("click", () => this.toggleCollapse())
     btnCollapse.disabled = Boolean(this.hasAttribute("disabled"))
 
+    shadowRoot.querySelector("#btnZoomOut").addEventListener("click", () => this.onChangeZoom(0.8))
+    shadowRoot.querySelector("#btnZoomIn").addEventListener("click", () => this.onChangeZoom(1 / 0.8))
+
     const canvas = shadowRoot.querySelector("canvas")
 
     Object.assign(this, { canvas, collapsible, btnCollapse })
@@ -89,7 +124,9 @@ class MinimapWidget extends HTMLElement {
       this.btnCollapse.disabled = newValue !== null
     }
   }
-
+  onChangeZoom(factor) {
+    this.dispatchEvent(new CustomEvent("changezoom", { detail: { factor } }))
+  }
   uncollapse() {
     this.collapsible.style.height = this.collapsible.scrollHeight + "px"
     this.dispatchEvent(new CustomEvent("collapse", { detail: { collapsed: false } }))

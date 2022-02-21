@@ -32,6 +32,11 @@ AFRAME.registerSystem("minimap", {
     minimapEl.addEventListener("collapse", (e) => {
       this.collapsed = e.detail.collapsed
     })
+    minimapEl.addEventListener("changezoom", (e) => {
+      const { factor } = e.detail
+      this.camera.zoom *= factor
+      this.camera.updateProjectionMatrix()
+    })
 
     const avatarModel = avatarRig.querySelector(".model")
     avatarModel.addEventListener(
