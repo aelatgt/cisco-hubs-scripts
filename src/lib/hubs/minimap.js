@@ -1,8 +1,13 @@
 import { registerDependency } from "./utils"
+import "./scene-overlay"
+import "../webcomponent/minimap-widget"
 
 const MINIMAP_LAYER = 20
+const SIZE = 256
+const tmpSize = new THREE.Vector2()
 
 AFRAME.registerSystem("minimap", {
+  dependencies: ["scene-overlay"],
   init: function () {
     this.renderTarget = new THREE.WebGLRenderTarget(1024, 1024)
     this.camera = new THREE.OrthographicCamera()
@@ -16,21 +21,45 @@ AFRAME.registerSystem("minimap", {
     const avatarRig = document.querySelector("#avatar-rig")
     avatarRig.setObject3D("minimapCamera", this.camera)
 
-    const minimapMaterial = new THREE.MeshBasicMaterial({
-      map: this.renderTarget.texture,
-      depthTest: false,
-    })
-    const minimap = new THREE.Mesh(new THREE.PlaneGeometry(), minimapMaterial)
-    minimap.renderOrder = 1
-    minimap.position.z = -2
+    const minimapEl = document.createElement("minimap-widget")
+    minimapEl.setAttribute("disabled", "")
+    minimapEl.style.position = "absolute"
+    minimapEl.style.bottom = 0
+    minimapEl.style.left = 0
+    this.context = minimapEl.canvas.getContext("2d")
 
-    const avatarPOV = document.querySelector("#avatar-pov-node")
-    avatarPOV.setObject3D("minmap", minimap)
+    const avatarModel = avatarRig.querySelector(".model")
+    avatarModel.addEventListener(
+      "model-loaded",
+      () => {
+        console.log("enabling minimap")
+        minimapEl.removeAttribute("disabled")
+      },
+      { once: true }
+    )
+
+    const sceneOverlayRoot = this.el.sceneEl.systems["scene-overlay"].root
+    sceneOverlayRoot.appendChild(minimapEl)
   },
   tick: function () {
-    APP.scene.renderer.setRenderTarget(this.renderTarget)
-    APP.scene.renderer.render(APP.scene.object3D, this.camera)
-    APP.scene.renderer.setRenderTarget(null)
+    this.renderToCanvas()
+  },
+  renderToCanvas() {
+    const scene = APP.scene.object3D
+    const renderer = APP.scene.renderer
+    // MODIFY RENDER SETTINGS
+    const tmpOnAfterRender = scene.onAfterRender
+    delete scene.onAfterRender
+
+    renderer.getSize(tmpSize)
+    renderer.setSize(SIZE, SIZE, false)
+
+    renderer.render(scene, this.camera)
+    this.context.drawImage(renderer.domElement, 0, 0, SIZE, SIZE)
+
+    // RESTORE RENDER SETTINGS
+    scene.onAfterRender = tmpOnAfterRender
+    renderer.setSize(tmpSize.x, tmpSize.y, false)
   },
 })
 
