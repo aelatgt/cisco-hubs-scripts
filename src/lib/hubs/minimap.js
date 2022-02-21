@@ -36,7 +36,7 @@ AFRAME.registerSystem("minimap", {
 
 AFRAME.registerComponent("minimap-avatar-indicator", {
   dependencies: ["player-info"],
-  init: function () {
+  init() {
     // Set up indicator dot
     const indicatorDot = new THREE.Mesh(new THREE.CircleGeometry(1, 16), new THREE.MeshBasicMaterial({ color: "blue" }))
     indicatorDot.rotation.x = -Math.PI / 2
@@ -56,13 +56,14 @@ AFRAME.registerComponent("minimap-avatar-indicator", {
     this.text.object3D.rotation.x = -Math.PI / 2
     this.el.appendChild(this.text)
 
-    this.el.addEventListener("model-loaded", this.updateText.bind(this))
-    this.el.sceneEl.addEventListener("presence_updated", this.updateText.bind(this))
-    this.el.sceneEl.addEventListener("stateadded", this.updateText.bind(this))
-    this.el.sceneEl.addEventListener("stateremoved", this.updateText.bind(this))
+    this.updateText = this.updateText.bind(this)
+    this.el.addEventListener("model-loaded", this.updateText)
+    this.el.sceneEl.addEventListener("presence_updated", this.updateText)
+    this.el.sceneEl.addEventListener("stateadded", this.updateText)
+    this.el.sceneEl.addEventListener("stateremoved", this.updateText)
     this.updateText()
   },
-  updateText: function () {
+  updateText() {
     const playerInfo = this.el.components["player-info"]
     if (!playerInfo) return
     this.text.setAttribute("text", { value: playerInfo.displayName })
