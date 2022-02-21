@@ -9,6 +9,7 @@ AFRAME.registerSystem("hue-lights", {
 
     this.el.addEventListener("config_state", (e) => {
       this.lights = new HueLights(e.detail.key)
+      this.enabled = e.detail.enableLights
     })
   },
 })

@@ -7,7 +7,7 @@ AFRAME.registerSystem("presence-zone", {
     this.entities = new Set()
     this.activeZone = null
     this.activeSize = 0
-    this.lights = this.el.systems["hue-lights"].lights
+    this.lightSystem = this.el.systems["hue-lights"]
     console.log("intitializing presence-zone system")
   },
   register: function (el) {
@@ -30,7 +30,9 @@ AFRAME.registerSystem("presence-zone", {
       this.activeZone = maxActiveZone
       this.activeSize = maxSize
       if (maxActiveZone) {
-        this.lights.set({ brightness: 100, color: maxActiveZone.getAttribute("presence-zone").color })
+        if (this.lightSystem.enabled) {
+          this.lightSystem.lights.set({ brightness: 100, color: maxActiveZone.getAttribute("presence-zone").color })
+        }
         console.log(`${maxActiveZone.className} is most active with ${maxSize} members`)
       } else {
         console.log("No active zones")

@@ -45,7 +45,7 @@ AFRAME.registerComponent("excalidraw", {
 
 AFRAME.GLTFModelPlus.registerComponent("excalidraw", "excalidraw")
 
-APP.utils.registerContentType(/https:\/\/excalidraw.com\//, (el, src) => {
+APP.utils.registerContentType(/^https:\/\/www.aelatgt.org\/excalidraw\//, (el, src) => {
   el.setAttribute("geometry", { primitive: "plane" })
   el.setAttribute("excalidraw", { link: src })
 })
