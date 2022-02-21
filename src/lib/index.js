@@ -15,6 +15,7 @@ import "./hubs/hue-lights"
 import "./hubs/page-visibility"
 import "./hubs/excalidraw"
 import "./hubs/debug"
+import "./hubs/minimap"
 
 // APP.scene.setAttribute("presence-notifications", "")
 
