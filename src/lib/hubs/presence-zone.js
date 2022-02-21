@@ -1,5 +1,11 @@
 import "./hue-lights"
+import "./page-visibility"
 import { registerDependency } from "./utils"
+
+const zoneColors = {
+  social: "orange",
+  meeting: "blue",
+}
 
 AFRAME.registerSystem("presence-zone", {
   dependencies: ["hue-lights"],
@@ -9,6 +15,9 @@ AFRAME.registerSystem("presence-zone", {
     this.activeSize = 0
     this.lightSystem = this.el.systems["hue-lights"]
     console.log("intitializing presence-zone system")
+
+    this.brightness = null
+    this.color = null
   },
   register: function (el) {
     this.entities.add(el)
@@ -17,33 +26,65 @@ AFRAME.registerSystem("presence-zone", {
     this.entities.delete(el)
   },
   tick: function () {
-    let maxSize = 0
-    let maxActiveZone = null
+    // Solve for color and brightness based on activity in each zone
+    let topZoneEl
     for (let zoneEl of this.entities) {
-      const zoneSize = zoneEl.components["presence-zone"].members.size
-      if (zoneSize > maxSize) {
-        maxSize = zoneSize
-        maxActiveZone = zoneEl
+      const zoneComponent = zoneEl.components["presence-zone"]
+      if (zoneComponent.members.size > 0) {
+        if (!topZoneEl) {
+          topZoneEl = zoneEl
+        } else {
+          const topZoneComponent = topZoneEl.components["presence-zone"]
+          const hasHigherPriority = zoneComponent.priority > topZoneComponent.priority
+          const hasEqualPriority = zoneComponent.priority === topZoneComponent.priority
+          const hasHigherActivity = zoneComponent.hasActiveMembers() > topZoneComponent.hasActiveMembers()
+          if (hasHigherPriority || (hasEqualPriority && hasHigherActivity)) {
+            topZoneEl = zoneEl
+          }
+        }
       }
     }
-    if (maxActiveZone !== this.activeZone || maxSize !== this.activeSize) {
-      this.activeZone = maxActiveZone
-      this.activeSize = maxSize
-      if (maxActiveZone) {
-        if (this.lightSystem.enabled) {
-          this.lightSystem.lights.set({ brightness: 100, color: maxActiveZone.getAttribute("presence-zone").color })
-        }
-        console.log(`${maxActiveZone.className} is most active with ${maxSize} members`)
-      } else {
-        console.log("No active zones")
+
+    let brightness
+    let color
+
+    if (topZoneEl) {
+      const topZoneComponent = topZoneEl.components["presence-zone"]
+      const zoneType = topZoneComponent.data.type
+      const zoneIsActive = topZoneComponent.hasActiveMembers()
+
+      brightness = zoneIsActive ? 100 : 50
+      color = zoneColors[zoneType]
+    } else {
+      color = "black"
+      brightness = 0
+    }
+
+    if (brightness !== this.brightness || color !== this.color) {
+      this.color = color
+      this.brightness = brightness
+      if (this.lightSystem.enabled) {
+        console.log("setting", color, brightness)
+        this.lightSystem.lights.set({ brightness, color })
       }
     }
   },
 })
 
+function getPriority(type) {
+  switch (type) {
+    case "social":
+      return 2
+    case "meeting":
+      return 1
+    default:
+      return 0
+  }
+}
+
 AFRAME.registerComponent("presence-zone", {
   schema: {
-    color: { type: "color" },
+    type: { type: "string" },
   },
   init: function () {
     const min = new THREE.Vector3()
@@ -54,8 +95,16 @@ AFRAME.registerComponent("presence-zone", {
     this.box = new THREE.Box3(min, max)
 
     this.members = new Set()
+    this.priority = getPriority(this.data.type)
 
     this.el.sceneEl.systems["presence-zone"].register(this.el)
+  },
+  hasActiveMembers() {
+    for (let memberEl of this.members) {
+      const { hidden } = memberEl.getAttribute("networked-page-visibility")
+      if (!hidden) return true
+    }
+    return false
   },
 })
 
