@@ -1,5 +1,6 @@
 import { registerDependency } from "./utils"
 import "./scene-overlay"
+import "./page-visibility"
 import "../webcomponent/minimap-widget"
 
 const MINIMAP_LAYER = 20
@@ -69,15 +70,20 @@ AFRAME.registerSystem("minimap", {
 })
 
 AFRAME.registerComponent("minimap-avatar-indicator", {
-  dependencies: ["player-info"],
+  dependencies: ["player-info", "networked-page-visibility"],
   init() {
     // Set up indicator dot
-    const indicatorDot = new THREE.Mesh(new THREE.CircleGeometry(1, 16), new THREE.MeshBasicMaterial({ color: "blue" }))
+    const indicatorDot = new THREE.Mesh(new THREE.CircleGeometry(1, 16), new THREE.MeshBasicMaterial({ color: "hotpink" }))
     indicatorDot.rotation.x = -Math.PI / 2
     indicatorDot.position.y = 100
     indicatorDot.renderOrder = 1
     indicatorDot.layers.set(MINIMAP_LAYER)
     this.el.setObject3D("indicatorDot", indicatorDot)
+    this.indicatorDot = indicatorDot
+    this.el.addEventListener("visibilitychange", (e) => {
+      this.updateIndicatorColor()
+    })
+    this.updateIndicatorColor()
 
     // Set up displayName text
     this.text = document.createElement("a-entity")
@@ -101,6 +107,10 @@ AFRAME.registerComponent("minimap-avatar-indicator", {
     const playerInfo = this.el.components["player-info"]
     if (!playerInfo) return
     this.text.setAttribute("text", { value: playerInfo.displayName })
+  },
+  updateIndicatorColor() {
+    const { hidden } = this.el.getAttribute("networked-page-visibility")
+    this.indicatorDot.material.color.set(hidden ? "red" : "green")
   },
 })
 

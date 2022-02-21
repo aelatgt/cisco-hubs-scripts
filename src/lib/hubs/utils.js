@@ -14,14 +14,16 @@ export function registerDependency(baseComponent, dependentComponent) {
  * Add a component to be networked for each avatar
  *
  * @param {string} name Name of the component to add to the "remote-avatar" NAF template
- * @param {string} value Initial value for the component
+ * @param {any} value Initial value for the component
  */
 export function registerNetworkedAvatarComponent(name, value) {
+  const stringValue = AFRAME.utils.styleParser.stringify(value)
+
   // Attach component locally so we can control it (since attachTemplateToLocal=false on #remote-avatar)
-  document.querySelector("#avatar-rig").setAttribute(name, value)
+  document.querySelector("#avatar-rig").setAttribute(name, stringValue)
 
   // Inject component into #remote-avatar template for remote users
-  NAF.schemas.templateCache["#remote-avatar"].firstElementChild.setAttribute(name, value)
+  NAF.schemas.templateCache["#remote-avatar"].firstElementChild.setAttribute(name, stringValue)
 
   // Set component to be synced in schema
   NAF.schemas.schemaDict["#remote-avatar"].components.push(name)
