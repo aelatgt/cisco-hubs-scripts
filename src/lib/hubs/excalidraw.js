@@ -1,4 +1,4 @@
-import * as Excalidraw from "https://www.aelatgt.org/excalidraw/excalidraw.hubs.min.js"
+import * as Excalidraw from "https://www.aelatgt.org/excalidraw/static/js/excalidraw.hubs.min.js"
 
 AFRAME.registerComponent("excalidraw", {
   schema: {
