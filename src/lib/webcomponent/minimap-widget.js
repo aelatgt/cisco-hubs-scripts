@@ -47,8 +47,10 @@ const style = css`
   #btnCollapse {
     background: none;
     border: none;
-    color: var(--hubs-gray);
     flex-grow: 1;
+  }
+  #btnCollapse:disabled {
+    color: gray;
   }
 
   #collapsible {
@@ -80,6 +82,7 @@ class MinimapWidget extends HTMLElement {
     const canvas = shadowRoot.querySelector("canvas")
 
     Object.assign(this, { canvas, collapsible, btnCollapse })
+    this.collapse()
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === "disabled") {
@@ -89,9 +92,11 @@ class MinimapWidget extends HTMLElement {
 
   uncollapse() {
     this.collapsible.style.height = this.collapsible.scrollHeight + "px"
+    this.dispatchEvent(new CustomEvent("collapse", { detail: { collapsed: false } }))
   }
   collapse() {
     this.collapsible.style.height = "0px"
+    this.dispatchEvent(new CustomEvent("collapse", { detail: { collapsed: true } }))
   }
   toggleCollapse() {
     if (this.collapsible.style.height === "0px") {

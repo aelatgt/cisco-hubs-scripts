@@ -27,6 +27,10 @@ AFRAME.registerSystem("minimap", {
     minimapEl.style.bottom = 0
     minimapEl.style.left = 0
     this.context = minimapEl.canvas.getContext("2d")
+    this.collapsed = true
+    minimapEl.addEventListener("collapse", (e) => {
+      this.collapsed = e.detail.collapsed
+    })
 
     const avatarModel = avatarRig.querySelector(".model")
     avatarModel.addEventListener(
@@ -42,6 +46,7 @@ AFRAME.registerSystem("minimap", {
     sceneOverlayRoot.appendChild(minimapEl)
   },
   tick: function () {
+    if (this.collapsed) return
     this.renderToCanvas()
   },
   renderToCanvas() {
