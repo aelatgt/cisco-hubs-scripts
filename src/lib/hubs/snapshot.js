@@ -16,10 +16,17 @@ AFRAME.registerComponent("snapshot", {
   spawnSnapshot: async function (canvas) {
     const blob = await new Promise((resolve) => canvas.toBlob(resolve))
     const file = new File([blob], "snap.png", TYPE_IMG_PNG)
-    this.localSnapCount++
-    const { entity } = APP.utils.addAndArrangeMedia(this.el, file, "photo-snapshot", this.localSnapCount, false, 1)
+    // const { entity } = APP.utils.addAndArrangeMedia(this.el, file, "photo-snapshot", this.localSnapCount, false, 1)
+    const { entity } = APP.utils.addMedia(file, "#interactable-media", undefined, "photo-snapshot", false)
+    entity.addEventListener(
+      "media_resolved",
+      () => {
+        this.el.emit(`photo_taken`, entity.components["media-loader"].data.src)
+      },
+      { once: true }
+    )
     return new Promise((resolve) => {
-      entity.addEventListener("image-loaded", resolve, ONCE_TRUE)
+      entity.addEventListener("image-loaded", resolve({ entity }), ONCE_TRUE)
     })
   },
 })

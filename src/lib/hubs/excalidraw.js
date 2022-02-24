@@ -45,8 +45,10 @@ AFRAME.registerComponent("excalidraw", {
     this.root.remove()
     this.unmount()
   },
-  onClickSnapshot: function () {
-    this.el.components["snapshot"].spawnSnapshot(this.canvas)
+  onClickSnapshot: async function () {
+    const { entity } = await this.el.components["snapshot"].spawnSnapshot(this.canvas)
+    entity.removeAttribute("offset-relative-to") // Clear for re-run
+    entity.setAttribute("offset-relative-to", "target: #avatar-pov-node; offset: 0 0 -1")
   },
 })
 
@@ -56,9 +58,14 @@ APP.utils.registerContentType(/^https:\/\/www.aelatgt.org\/excalidraw\//, (el, s
   el.setAttribute("geometry", { primitive: "plane" })
   el.setAttribute("excalidraw", { link: src })
 
-  // Replace default clone button from interactable-media template
   const cloneButton = el.querySelector("[clone-media-button]")
-  cloneButton.removeAttribute("clone-media-button")
-  cloneButton.firstElementChild.setAttribute("text", { value: "snapshot" })
-  cloneButton.object3D.addEventListener("interact", () => el.emit("click_snapshot"))
+
+  if (cloneButton) {
+    // Replace default clone button from interactable-media template
+    cloneButton.removeAttribute("clone-media-button")
+    cloneButton.firstElementChild.setAttribute("text", { value: "snapshot" })
+    cloneButton.object3D.addEventListener("interact", () => el.emit("click_snapshot"))
+  } else {
+    // Otherwise user clicked "refresh", so cloneButton already modified
+  }
 })
