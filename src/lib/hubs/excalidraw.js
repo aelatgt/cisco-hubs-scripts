@@ -1,6 +1,8 @@
 import * as Excalidraw from "https://www.aelatgt.org/excalidraw/static/js/excalidraw.hubs.min.js"
+import "./snapshot"
 
 AFRAME.registerComponent("excalidraw", {
+  dependencies: ["snapshot"],
   schema: {
     link: { type: "string" },
   },
@@ -18,6 +20,8 @@ AFRAME.registerComponent("excalidraw", {
 
     this.unmount = Excalidraw.mount(this.root, this.data.link)
     this.lastUpdateTime = 0
+
+    this.el.addEventListener("click_snapshot", () => this.onClickSnapshot())
   },
   _tryInitCanvas: function () {
     const canvas = this.root.querySelector("canvas")
@@ -41,6 +45,9 @@ AFRAME.registerComponent("excalidraw", {
     this.root.remove()
     this.unmount()
   },
+  onClickSnapshot: function () {
+    this.el.components["snapshot"].spawnSnapshot(this.canvas)
+  },
 })
 
 AFRAME.GLTFModelPlus.registerComponent("excalidraw", "excalidraw")
@@ -48,4 +55,10 @@ AFRAME.GLTFModelPlus.registerComponent("excalidraw", "excalidraw")
 APP.utils.registerContentType(/^https:\/\/www.aelatgt.org\/excalidraw\//, (el, src) => {
   el.setAttribute("geometry", { primitive: "plane" })
   el.setAttribute("excalidraw", { link: src })
+
+  // Replace default clone button from interactable-media template
+  const cloneButton = el.querySelector("[clone-media-button]")
+  cloneButton.removeAttribute("clone-media-button")
+  cloneButton.firstElementChild.setAttribute("text", { value: "snapshot" })
+  cloneButton.object3D.addEventListener("interact", () => el.emit("click_snapshot"))
 })
