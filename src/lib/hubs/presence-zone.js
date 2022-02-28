@@ -119,6 +119,7 @@ AFRAME.registerComponent("presence-zone-member", {
   init: function () {
     this.zoneSystem = this.el.sceneEl.systems["presence-zone"]
     this.isSelf = this.el === APP.scene.querySelector("#avatar-rig")
+    this.zones = new Set()
   },
   tick: function () {
     for (let zoneEl of this.zoneSystem.entities) {
@@ -126,12 +127,19 @@ AFRAME.registerComponent("presence-zone-member", {
       if (zone.box.containsPoint(this.el.object3D.position)) {
         if (!this.isSelf) {
           zone.peers.add(this.el)
+          this.zones.add(zone)
         }
       } else {
         if (!this.isSelf) {
           zone.peers.delete(this.el)
+          this.zones.delete(zone)
         }
       }
+    }
+  },
+  remove: function () {
+    for (let zone of this.zones) {
+      zone.peers.delete(this.el)
     }
   },
 })
