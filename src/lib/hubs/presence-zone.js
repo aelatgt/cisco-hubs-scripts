@@ -54,7 +54,7 @@ AFRAME.registerSystem("presence-zone", {
       const zoneType = topZoneComponent.data.type
       const zoneIsActive = topZoneComponent.hasActivePeers()
 
-      brightness = zoneIsActive ? 100 : 50
+      brightness = zoneIsActive ? 100 : 30
       color = zoneColors[zoneType]
     } else {
       color = "black"
