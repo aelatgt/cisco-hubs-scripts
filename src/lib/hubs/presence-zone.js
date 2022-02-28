@@ -5,6 +5,7 @@ import { registerDependency } from "./utils"
 const zoneColors = {
   social: "orange",
   meeting: "blue",
+  self: "green",
 }
 
 AFRAME.registerSystem("presence-zone", {
@@ -30,14 +31,14 @@ AFRAME.registerSystem("presence-zone", {
     let topZoneEl
     for (let zoneEl of this.entities) {
       const zoneComponent = zoneEl.components["presence-zone"]
-      if (zoneComponent.members.size > 0) {
+      if (zoneComponent.peers.size > 0) {
         if (!topZoneEl) {
           topZoneEl = zoneEl
         } else {
           const topZoneComponent = topZoneEl.components["presence-zone"]
           const hasHigherPriority = zoneComponent.priority > topZoneComponent.priority
           const hasEqualPriority = zoneComponent.priority === topZoneComponent.priority
-          const hasHigherActivity = zoneComponent.hasActiveMembers() > topZoneComponent.hasActiveMembers()
+          const hasHigherActivity = zoneComponent.hasActivePeers() > topZoneComponent.hasActivePeers()
           if (hasHigherPriority || (hasEqualPriority && hasHigherActivity)) {
             topZoneEl = zoneEl
           }
@@ -51,7 +52,7 @@ AFRAME.registerSystem("presence-zone", {
     if (topZoneEl) {
       const topZoneComponent = topZoneEl.components["presence-zone"]
       const zoneType = topZoneComponent.data.type
-      const zoneIsActive = topZoneComponent.hasActiveMembers()
+      const zoneIsActive = topZoneComponent.hasActivePeers()
 
       brightness = zoneIsActive ? 100 : 50
       color = zoneColors[zoneType]
@@ -73,6 +74,8 @@ AFRAME.registerSystem("presence-zone", {
 
 function getPriority(type) {
   switch (type) {
+    case "self":
+      return 3
     case "social":
       return 2
     case "meeting":
@@ -82,25 +85,29 @@ function getPriority(type) {
   }
 }
 
+const vA = new THREE.Vector3()
+const vB = new THREE.Vector3()
+
 AFRAME.registerComponent("presence-zone", {
   schema: {
     type: { type: "string" },
   },
   init: function () {
-    const min = new THREE.Vector3()
-    const max = new THREE.Vector3()
+    this.box = new THREE.Box3()
 
-    min.copy(this.el.object3D.scale).multiplyScalar(-0.5).add(this.el.object3D.position)
-    max.copy(this.el.object3D.scale).multiplyScalar(0.5).add(this.el.object3D.position)
-    this.box = new THREE.Box3(min, max)
-
-    this.members = new Set()
+    this.peers = new Set()
     this.priority = getPriority(this.data.type)
 
     this.el.sceneEl.systems["presence-zone"].register(this.el)
   },
-  hasActiveMembers() {
-    for (let memberEl of this.members) {
+  tick() {
+    this.el.object3D.getWorldScale(vA)
+    this.el.object3D.getWorldPosition(vB)
+    this.box.min.copy(vA).multiplyScalar(-0.5).add(vB)
+    this.box.max.copy(vA).multiplyScalar(0.5).add(vB)
+  },
+  hasActivePeers() {
+    for (let memberEl of this.peers) {
       const { hidden } = memberEl.getAttribute("networked-page-visibility")
       if (!hidden) return true
     }
@@ -111,17 +118,19 @@ AFRAME.registerComponent("presence-zone", {
 AFRAME.registerComponent("presence-zone-member", {
   init: function () {
     this.zoneSystem = this.el.sceneEl.systems["presence-zone"]
-    this.zones = new Set()
+    this.isSelf = this.el === APP.scene.querySelector("#avatar-rig")
   },
   tick: function () {
     for (let zoneEl of this.zoneSystem.entities) {
       const zone = zoneEl.components["presence-zone"]
       if (zone.box.containsPoint(this.el.object3D.position)) {
-        zone.members.add(this.el)
-        this.zones.add(zone)
+        if (!this.isSelf) {
+          zone.peers.add(this.el)
+        }
       } else {
-        zone.members.delete(this.el)
-        this.zones.delete(zone)
+        if (!this.isSelf) {
+          zone.peers.delete(this.el)
+        }
       }
     }
   },
@@ -129,3 +138,11 @@ AFRAME.registerComponent("presence-zone-member", {
 
 AFRAME.GLTFModelPlus.registerComponent("presence-zone", "presence-zone")
 registerDependency("networked-avatar", "presence-zone-member")
+
+// Create a zone around user's own avatar
+
+const avatarRig = APP.scene.querySelector("#avatar-rig")
+const selfZoneEl = document.createElement("a-entity")
+selfZoneEl.setAttribute("presence-zone", { type: "self" })
+selfZoneEl.setAttribute("scale", "3 3 3")
+avatarRig.appendChild(selfZoneEl)
