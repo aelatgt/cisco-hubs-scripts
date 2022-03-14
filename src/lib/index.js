@@ -6,7 +6,6 @@ import "@/styles/style.css"
 
 // Hubs components
 // import "./hubs-components/presence-notifications"
-// import "./hubs-components/counter"
 // import "./hubs-components/text-input"
 // import "./hubs-components/collision-events"
 import "./hubs-components/presence-zone"
@@ -16,6 +15,7 @@ import "./hubs-components/page-visibility"
 import "./hubs-components/excalidraw"
 import "./hubs-components/debug"
 import "./hubs-components/minimap"
+import "./hubs-components/trello-board"
 
 // APP.scene.setAttribute("presence-notifications", "")
 
