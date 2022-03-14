@@ -1,5 +1,6 @@
 import "./hue-lights"
 import "./page-visibility"
+import "./web-notifications"
 import { registerDependency } from "./utils"
 
 const zoneColors = {
@@ -9,12 +10,13 @@ const zoneColors = {
 }
 
 AFRAME.registerSystem("presence-zone", {
-  dependencies: ["hue-lights"],
+  dependencies: ["hue-lights", "web-notifications"],
   init: function () {
     this.entities = new Set()
     this.activeZone = null
     this.activeSize = 0
     this.lightSystem = this.el.systems["hue-lights"]
+    this.webNotificationsSystem = this.el.systems["web-notifications"]
     console.log("intitializing presence-zone system")
 
     this.brightness = null
@@ -48,11 +50,13 @@ AFRAME.registerSystem("presence-zone", {
 
     let brightness
     let color
+    let zoneType
+    let zoneIsActive
 
     if (topZoneEl) {
       const topZoneComponent = topZoneEl.components["presence-zone"]
-      const zoneType = topZoneComponent.data.type
-      const zoneIsActive = topZoneComponent.hasActivePeers()
+      zoneType = topZoneComponent.data.type
+      zoneIsActive = topZoneComponent.hasActivePeers()
 
       brightness = zoneIsActive ? 100 : 30
       color = zoneColors[zoneType]
@@ -67,6 +71,15 @@ AFRAME.registerSystem("presence-zone", {
       if (this.lightSystem.enabled) {
         console.log("setting", color, brightness)
         this.lightSystem.lights.set({ brightness, color })
+      }
+      if (topZoneEl) {
+        const activeStr = zoneIsActive ? "active" : "inactive"
+        let message
+        if (zoneType === "self") message = `An ${activeStr} user is nearby`
+        else message = `An ${activeStr} user is in the ${zoneType} area`
+        if (!document.hasFocus()) {
+          this.webNotificationsSystem.notify(message)
+        }
       }
     }
   },
@@ -152,5 +165,5 @@ registerDependency("networked-avatar", "presence-zone-member")
 const avatarRig = APP.scene.querySelector("#avatar-rig")
 const selfZoneEl = document.createElement("a-entity")
 selfZoneEl.setAttribute("presence-zone", { type: "self" })
-selfZoneEl.setAttribute("scale", "3 3 3")
+selfZoneEl.setAttribute("scale", "5 5 5")
 avatarRig.appendChild(selfZoneEl)

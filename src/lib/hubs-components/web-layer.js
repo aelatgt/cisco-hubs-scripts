@@ -1,6 +1,4 @@
-import { WebLayer3D } from "ethereal"
-
-const { AFRAME, THREE } = window
+const { AFRAME, THREE, Ethereal } = window
 
 /**
  * Creates an HTMLElement `layerEl` and renders it with Ethereal as `layer`
@@ -19,13 +17,13 @@ AFRAME.registerComponent("web-layer", {
     // Stylesheet
     const linkEl = document.createElement("link")
     linkEl.rel = "stylesheet"
-    linkEl.href = import.meta.DEVELOPMENT
+    linkEl.href = import.meta.env.DEV
       ? "https://mattrossman.ngrok.io/lib/style.css"
       : "https://www.aelatgt.org/cisco-hubs-scripts/lib/style.css"
     this.layerEl.appendChild(linkEl)
     console.log("adding weblayer stylesheet:", linkEl.href)
 
-    this.layer = new WebLayer3D(this.layerEl, { textureEncoding: THREE.sRGBEncoding, autoRefresh: true })
+    this.layer = new Ethereal.WebLayer3D(this.layerEl, { textureEncoding: THREE.sRGBEncoding, autoRefresh: true })
     this.layer.scale.setScalar(10)
     this.el.setObject3D("webLayer3D", this.layer)
   },

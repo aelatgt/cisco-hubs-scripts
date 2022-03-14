@@ -1,4 +1,4 @@
-import { mount } from "@/lib/react/PresenceUI"
+import { mount } from "@/lib/react/ConfigPanel"
 import { HueLights } from "./HueLights"
 
 const { APP, AFRAME, THREE } = window
