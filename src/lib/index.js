@@ -5,17 +5,17 @@ import "https://cdn.jsdelivr.net/npm/ethereal@2.1.3/dist/ethereal.umd.js"
 import "@/styles/style.css"
 
 // Hubs components
-// import "./hubs/presence-notifications"
-// import "./hubs/counter"
-// import "./hubs/text-input"
-// import "./hubs/collision-events"
-import "./hubs/presence-zone"
-import "./hubs/config-panel"
-import "./hubs/hue-lights"
-import "./hubs/page-visibility"
-import "./hubs/excalidraw"
-import "./hubs/debug"
-import "./hubs/minimap"
+// import "./hubs-components/presence-notifications"
+// import "./hubs-components/counter"
+// import "./hubs-components/text-input"
+// import "./hubs-components/collision-events"
+import "./hubs-components/presence-zone"
+import "./hubs-components/config-panel"
+import "./hubs-components/hue-lights"
+import "./hubs-components/page-visibility"
+import "./hubs-components/excalidraw"
+import "./hubs-components/debug"
+import "./hubs-components/minimap"
 
 // APP.scene.setAttribute("presence-notifications", "")
 

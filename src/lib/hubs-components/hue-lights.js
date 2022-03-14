@@ -1,5 +1,5 @@
 import "./config-panel"
-import { HueLights } from "./HueLights"
+import { HueLights } from "../utils/HueLights"
 
 AFRAME.registerSystem("hue-lights", {
   dependencies: ["config-panel"],
