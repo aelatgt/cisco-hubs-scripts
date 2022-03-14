@@ -1,4 +1,4 @@
 // tailwind.config.js
 module.exports = {
-  content: process.env.LIB ? ["./src/lib/**/*.jsx"] : ["./src/app/**/*.jsx"],
+  content: process.env.LIB ? ["./src/lib/**/*.jsx"] : ["./src/lib/**/*.jsx", "./src/app/**/*.jsx"],
 }
