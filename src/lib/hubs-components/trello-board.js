@@ -1,4 +1,4 @@
-import { render } from "react-dom"
+import { render } from "preact"
 import { io } from "socket.io-client"
 import { Trello } from "@/lib/react/Trello"
 import "./web-layer"

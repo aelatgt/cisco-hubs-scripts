@@ -20,6 +20,7 @@
     "valtio": "^1.2.7"
   },
   "devDependencies": {
+    "@preact/preset-vite": "^2.1.7",
     "@vitejs/plugin-react": "^1.1.0",
     "autoprefixer": "^10.4.0",
     "concurrently": "^6.4.0",

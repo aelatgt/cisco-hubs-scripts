@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "preact/hooks"
 
 const RSS_SERVER = "https://cisco-rss-server.glitch.me/feed"
 

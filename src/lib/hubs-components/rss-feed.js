@@ -1,5 +1,4 @@
-import { render } from "react-dom"
-import { createElement } from "react"
+import { h, render } from "preact"
 import { RSSFeed } from "@/lib/react/RSSFeed"
 import "./web-layer"
 import "./web-layer-events"
@@ -14,7 +13,7 @@ AFRAME.registerComponent("rss-feed", {
     this.webLayerComponent = this.el.components["web-layer"]
   },
   update: function () {
-    render(createElement(RSSFeed, { href: this.data.href, count: this.data.count }, null), this.webLayerComponent.rootEl)
+    render(h(RSSFeed, { href: this.data.href, count: this.data.count }, null), this.webLayerComponent.rootEl)
   },
 })
 

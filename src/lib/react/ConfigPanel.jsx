@@ -1,4 +1,4 @@
-import { render } from "react-dom"
+import { render } from "preact"
 import { proxy, subscribe, useSnapshot } from "valtio"
 
 const initialState = {

@@ -1,5 +1,5 @@
-import { useRef, useState, useLayoutEffect } from "react"
-import { render } from "react-dom"
+import { render } from "preact"
+import { useRef, useState, useLayoutEffect } from "preact/hooks"
 import { WebLayer3D } from "ethereal"
 
 import * as THREE from "three"
@@ -71,7 +71,6 @@ export function PreviewEthereal({ children }) {
             redirectEvent(e)
           }
           this.renderer.domElement.addEventListener("click", redirectCursorEvent, false)
-          this.renderer.domElement.addEventListener("mousemove", redirectCursorEvent, false)
         },
         tick() {
           this.layer.update()

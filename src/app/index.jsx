@@ -1,11 +1,5 @@
-import React from "react"
-import ReactDOM from "react-dom"
 import "../styles/style.css"
+import { render } from "preact"
 import { App } from "./App"
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById("root")
-)
+render(<App />, document.getElementById("root"))

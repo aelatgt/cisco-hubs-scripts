@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "preact/hooks"
 import { io } from "socket.io-client"
 
 const server = "https://cisco-trello-server.herokuapp.com/"
