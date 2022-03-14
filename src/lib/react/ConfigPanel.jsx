@@ -4,6 +4,7 @@ import { proxy, subscribe, useSnapshot } from "valtio"
 const initialState = {
   key: "",
   enableLights: false,
+  enableWebNotifications: false,
 }
 
 // Load existing state from localStorage
@@ -22,10 +23,10 @@ export function mount() {
   const root = document.createElement("div")
   root.style.position = "fixed"
   document.body.appendChild(root)
-  render(<PresenceUI />, root)
+  render(<ConfigPanel />, root)
 }
 
-export function PresenceUI() {
+export function ConfigPanel() {
   const snap = useSnapshot(state)
   return (
     <div
@@ -46,6 +47,10 @@ export function PresenceUI() {
       <label style={{ display: "flex", gap: "5px", alignItems: "center" }}>
         Enable Lights:
         <input type="checkbox" onChange={(e) => (state.enableLights = e.target.checked)} checked={snap.enableLights} />
+      </label>
+      <label style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+        Web Notifications:
+        <input type="checkbox" onChange={(e) => (state.enableWebNotifications = e.target.checked)} checked={snap.enableWebNotifications} />
       </label>
     </div>
   )
