@@ -71,6 +71,7 @@ export function PreviewEthereal({ children }) {
             redirectEvent(e)
           }
           this.renderer.domElement.addEventListener("click", redirectCursorEvent, false)
+          this.renderer.domElement.addEventListener("mousemove", redirectCursorEvent, false)
         },
         tick() {
           this.layer.update()

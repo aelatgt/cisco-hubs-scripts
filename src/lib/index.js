@@ -16,6 +16,7 @@ import "./hubs-components/excalidraw"
 import "./hubs-components/debug"
 import "./hubs-components/minimap"
 import "./hubs-components/trello-board"
+import "./hubs-components/rss-feed"
 
 // APP.scene.setAttribute("presence-notifications", "")
 

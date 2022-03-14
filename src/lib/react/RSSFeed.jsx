@@ -35,13 +35,13 @@ function FeedItem({ item }) {
   const thumbnailURL = item.media?.thumbnail?.url?.replace(/&amp;/g, "&")
   const onClick = () => window.open(item.link, "_blank")
   return (
-    <li class="bg-white rounded h-32 relative p-4 flex flex-col">
+    <li class="bg-white rounded h-32 relative p-4 flex flex-col" xr-layer>
       <h1 dangerouslySetInnerHTML={{ __html: item.title }} class="flex-grow text-xl font-bold" />
       <p>{formatDate(item.published)}</p>
       <button
         onClick={onClick}
         xr-layer
-        class="absolute bottom-4 right-4 h-10 w-10 p-3 grid place-items-center text-sm bg-pink-500 text-white font-semibold rounded-full cursor-pointer"
+        class="absolute bottom-4 right-4 h-10 w-10 p-3 grid place-items-center text-sm bg-pink-500 hover:bg-pink-300 text-white font-semibold rounded-full cursor-pointer"
       >
         <svg style="fill: currentColor;" viewBox="0 0 768 1024" xmlns="http://www.w3.org/2000/svg">
           <path
