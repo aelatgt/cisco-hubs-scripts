@@ -9,6 +9,7 @@ AFRAME.registerComponent("web-layer", {
   init: function () {
     this.layerEl = document.createElement("div")
     this.layerEl.style.display = "inline-block"
+    this.layerEl.style.width = "max-content"
 
     // Root element to mount components into
     this.rootEl = document.createElement("div")
