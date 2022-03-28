@@ -34,10 +34,12 @@ AFRAME.registerComponent("trello-board", {
 
 AFRAME.GLTFModelPlus.registerComponent("trello-board", "trello-board")
 
-APP.utils.registerContentType(/^https:\/\/trello.com\/b\//, (el, src) => {
+const pattern = /^https:\/\/trello.com\/b\/(?<shortId>.*)\/(?<name>.*)/
+
+APP.utils.registerContentType(pattern, (el, src) => {
   console.log("Spawning trello board:", src)
+  const { shortId, name } = src.match(pattern).groups
   el.setAttribute("geometry", { primitive: "plane" })
   el.setAttribute("material", { visible: false })
-  el.setAttribute("trello-board", { boardId: "612d1d5d76abff8a743892e3" })
-  window.el = el
+  el.setAttribute("trello-board", { boardId: shortId })
 })
