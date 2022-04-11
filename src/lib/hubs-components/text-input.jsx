@@ -1,5 +1,5 @@
-import { render } from "react-dom"
-import { useRef, useState } from "react"
+import { render } from "preact"
+import { useRef, useState } from "preact/hooks"
 
 import "./web-layer"
 import "./web-layer-events"

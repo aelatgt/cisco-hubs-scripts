@@ -1,4 +1,4 @@
-import { render } from "react-dom"
+import { render } from "preact"
 import { Counter } from "@/lib/react/Counter"
 
 import "./web-layer"

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "preact/hooks"
 import { io } from "socket.io-client"
 
 const server = "https://cisco-trello-server.herokuapp.com/"
@@ -12,7 +12,15 @@ export function useRealtimeBoard(boardId) {
   return board
 }
 
-export function Trello({ board }) {
+export function Trello({ cards, lists }) {
+  const board = lists.map((list) => {
+    const cardsOnList = cards.filter((card) => card.idList === list.id)
+    return {
+      name: list.name,
+      id: list.id,
+      cards: cardsOnList,
+    }
+  })
   return (
     <div class="grid grid-flow-col auto-cols-fr gap-3 items-start">
       {board?.map((list) => (

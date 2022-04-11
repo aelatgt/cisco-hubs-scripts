@@ -1,5 +1,5 @@
-import { Fragment } from "react"
-import { render } from "react-dom"
+import { Fragment } from "preact"
+import { render } from "preact"
 import { proxy, subscribe, useSnapshot } from "valtio"
 
 const { APP, AFRAME } = window

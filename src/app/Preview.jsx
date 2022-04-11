@@ -1,5 +1,5 @@
-import { useRef, useState, useLayoutEffect } from "react"
-import { render } from "react-dom"
+import { render } from "preact"
+import { useRef, useState, useLayoutEffect } from "preact/hooks"
 import { WebLayer3D } from "ethereal"
 
 import * as THREE from "three"
@@ -13,12 +13,15 @@ export function PreviewSplit({ stylesheet, children }) {
   return (
     <div className="h-screen w-screen grid auto-rows-fr auto-cols-fr grid-flow-row lg:grid-flow-col">
       <div className="grid place-content-center bg-gradient-to-br from-white to-gray-100">{children}</div>
-      <PreviewEthereal stylesheet={stylesheet}>{children}</PreviewEthereal>
+      <PreviewEthereal>
+        <link rel="stylesheet" href="./lib/style.css" />
+        {children}
+      </PreviewEthereal>
     </div>
   )
 }
 
-export function PreviewEthereal({ stylesheet, children }) {
+export function PreviewEthereal({ children }) {
   // Root element that Three's <canvas> will be placed in
   const root = useRef()
 

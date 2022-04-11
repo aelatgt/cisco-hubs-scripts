@@ -1,10 +1,31 @@
-import { render } from "react-dom"
+import { render } from "preact"
 import { io } from "socket.io-client"
 import { Trello } from "@/lib/react/Trello"
 import "./web-layer"
 import "./web-layer-events"
 
-const cursorLocalPos = new THREE.Vector3()
+const SERVER_URL = import.meta.env.DEV ? "https://matt-backend.ngrok.io/" : "https://cisco-trello-server.herokuapp.com/"
+console.log("Using trello server at", SERVER_URL)
+
+AFRAME.registerSystem("trello", {
+  init: function () {
+    const configPanel = this.el.systems["config-panel"]
+    this.token = configPanel.state.trelloTokenValid === true ? configPanel.state.trelloToken : null
+    this.boards = []
+
+    this.el.sceneEl.addEventListener("config_state", (state) => {
+      this.token = state.trelloTokenValidValid === true ? state.trelloToken : null
+      this.boards.forEach((board) => board.update())
+    })
+  },
+  registerBoard: function (trelloBoard) {
+    this.boards.push(trelloBoard)
+  },
+  unregisterBoard: function (trelloBoard) {
+    const i = this.boards.indexOf(trelloBoard)
+    this.boards.splice(i, 1)
+  },
+})
 
 AFRAME.registerComponent("trello-board", {
   dependencies: ["web-layer"],
@@ -15,106 +36,47 @@ AFRAME.registerComponent("trello-board", {
     // WebLayer3D setup
     this.webLayerComponent = this.el.components["web-layer"]
     const layer = this.webLayerComponent.layer
-    this.layer = layer
+    layer.scale.setScalar(2)
 
-    // Socket.io setup
-    this.board = null
-    this.socket = io(`https://cisco-trello-server.herokuapp.com/${this.data.boardId}`)
-    this.socket.on("message", (board) => {
-      console.log(board)
+    // SocketIO setup
+    this.socket = io(SERVER_URL)
+    this.board = null // debug
+  },
+  update: async function () {
+    const trelloSystem = this.el.sceneEl.systems["trello"]
+    const token = trelloSystem.token
+
+    console.log("component using token", token)
+
+    if (!token) return
+
+    this.socket.emit("register_webhook", { token, idShort: this.data.boardId }, (data) => {
+      console.log("listening for changes to board", this.data.boardId, data)
+    })
+    this.socket.on("board", (board) => {
+      console.log("board", this.data.boardId, board)
       this.board = board
       this.renderBoard(board)
     })
-
-    // Left and right cursor components (mouse acts as right cursor on desktop)
-    const cursorControllers = [...document.querySelectorAll("[cursor-controller]")].map((el) => el.components["cursor-controller"])
-
-    // Set up Ethereal's interactionRays for hover states
-    layer.interactionRays = cursorControllers.map((cursorController) => cursorController.raycaster.ray)
-
-    this.el.classList.add("interactable")
-    this.el.setAttribute("tags", {
-      isHoldable: true,
-      holdableButton: true,
-    })
-    this.el.setAttribute("is-remote-hover-target", "")
-
-    this.dragLayer = null
-    this.dragCursor = null
-    this.dragCursorController = null
-    this.dragOffset = new THREE.Vector3()
-
-    // Set up handlers for those events we enabled earlier
-    this.el.object3D.addEventListener("holdable-button-down", (cursor) => {
-      cursorControllers.forEach((cursorController) => {
-        if (cursorController.enabled) {
-          const hit = layer.hitTest(cursorController.raycaster.ray)
-          if (hit && hit.layer.element.dataset.type === "card") {
-            this.dragLayer = hit.layer
-            window.dragLayer = hit.layer
-            this.dragCursor = cursor.object3D
-            this.dragCursorController = cursorController
-
-            // Get cursor position in local layer space
-            cursorLocalPos.copy(this.dragCursor.position)
-            layer.worldToLocal(cursorLocalPos)
-
-            this.dragOffset.copy(this.dragLayer.position).sub(cursorLocalPos)
-          }
-        }
-      })
-    })
-    this.el.object3D.addEventListener("holdable-button-up", () => {
-      if (this.dragLayer) {
-        const listLayers = [...layer.rootLayer.element.querySelectorAll('[data-type="list"]')].map((el) => el.layer.contentMesh)
-        const intersections = this.dragCursorController.raycaster.intersectObjects(listLayers)
-        if (intersections.length > 0) {
-          const listEl = intersections[0].object.parent.element
-          const listId = listEl.dataset.id
-          const cardId = this.dragLayer.element.dataset.id
-          console.log(`Dropping card ${cardId} onto list ${listId}`)
-          this.moveCardToList(cardId, listId)
-
-          // Ethereal doesn't remove the old layer, need to manually remove it
-          this.dragLayer.parent.remove(this.dragLayer)
-          this.dragLayer.dispose()
-        }
-        this.dragLayer = null
-      }
-    })
+    this.socket.emit("get_board", { token, boardId: this.data.boardId })
   },
   renderBoard: function (board) {
-    render(Trello({ board }), this.webLayerComponent.rootEl)
-  },
-  moveCardToList: function (cardId, listId) {
-    // Re-render locally immediately
-    const newList = this.board.find((list) => list.id === listId)
-    for (const oldList of this.board) {
-      const cardIndex = oldList.cards.findIndex((card) => card.id === cardId)
-      if (cardIndex >= 0) {
-        const card = oldList.cards[cardIndex]
-        oldList.cards.splice(cardIndex, 1)
-        newList.cards.push(card)
-        this.renderBoard(this.board)
-        break
-      }
-    }
-
-    // Send update over network
-    this.socket.emit("moveCardToList", cardId, listId)
+    const { cards, lists } = board
+    render(Trello({ cards, lists }), this.webLayerComponent.rootEl)
   },
   tick: function () {
-    if (this.dragLayer) {
-      // Get cursor position in local layer space
-      cursorLocalPos.copy(this.dragCursor.position)
-      this.layer.worldToLocal(cursorLocalPos)
-
-      // Handle layout ourselves
-      this.dragLayer.position.copy(cursorLocalPos).add(this.dragOffset)
-    } else {
-      this.webLayerComponent.layer.update()
-    }
+    this.webLayerComponent.layer.update()
   },
 })
 
 AFRAME.GLTFModelPlus.registerComponent("trello-board", "trello-board")
+
+const pattern = /^https:\/\/trello.com\/b\/(?<shortId>.*)\/(?<name>.*)/
+
+APP.utils.registerContentType(pattern, (el, src) => {
+  console.log("Spawning trello board:", src)
+  const { shortId, name } = src.match(pattern).groups
+  el.setAttribute("geometry", { primitive: "plane" })
+  el.setAttribute("material", { visible: false })
+  el.setAttribute("trello-board", { boardId: shortId })
+})
