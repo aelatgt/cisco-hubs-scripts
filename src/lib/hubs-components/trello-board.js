@@ -40,6 +40,7 @@ AFRAME.registerComponent("trello-board", {
 
     // SocketIO setup
     this.socket = io(SERVER_URL)
+    this.board = null // debug
   },
   update: async function () {
     const trelloSystem = this.el.sceneEl.systems["trello"]
@@ -54,12 +55,14 @@ AFRAME.registerComponent("trello-board", {
     })
     this.socket.on("board", (board) => {
       console.log("board", this.data.boardId, board)
-      // this.board = board
-      // this.renderBoard(board)
+      this.board = board
+      this.renderBoard(board)
     })
+    this.socket.emit("get_board", { token, boardId: this.data.boardId })
   },
   renderBoard: function (board) {
-    render(Trello({ board }), this.webLayerComponent.rootEl)
+    const { cards, lists } = board
+    render(Trello({ cards, lists }), this.webLayerComponent.rootEl)
   },
   tick: function () {
     this.webLayerComponent.layer.update()
@@ -74,6 +77,6 @@ APP.utils.registerContentType(pattern, (el, src) => {
   console.log("Spawning trello board:", src)
   const { shortId, name } = src.match(pattern).groups
   el.setAttribute("geometry", { primitive: "plane" })
-  // el.setAttribute("material", { visible: false })
+  el.setAttribute("material", { visible: false })
   el.setAttribute("trello-board", { boardId: shortId })
 })
