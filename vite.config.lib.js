@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: mode === "development" ? "public/lib" : "build/lib",
     target: "esnext",
+    minify: mode !== "development",
     lib: {
       entry: "src/lib/index.js",
       formats: ["es"],
