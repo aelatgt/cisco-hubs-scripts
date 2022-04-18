@@ -82,7 +82,7 @@ In your IFTTT app, configure two applets:
 
 **Applet 2**
 
-- IF "Receive a web request" (Event name "hue_brightness")
+- IF "Receive a web request" (Event name "hue_color")
 - THEN "Change color (Phillips Hue)"
 - Select your Hue Light
 - In the "Color value or name" field click "Add Ingredient" > "Value1"
