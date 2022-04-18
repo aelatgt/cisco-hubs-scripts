@@ -25,7 +25,8 @@ If you'd like to host these scripts yourself (which is necessary if you're modif
 
 1. Fork and clone this repository
 2. (optional) Change the `VITE_TRELLO_SERVER` value in `.env.production` to your trello server URL and commit/push this change
-3. On GitHub go to the repo's "Settings" > "Pages" and configure it to deploy from the `gh-pages` branch
+3. Change the `VITE_STYLESHEET` value in `.env.production` to point to the compiled CSS file that will soon be hosted on GitHub Pages, which should look something like `https://username.github.io/cisco-hubs-scripts/lib/style.css`
+4. On GitHub go to the repo's "Settings" > "Pages" and configure it to deploy from the `gh-pages` branch
 
 The `.github/workflows/deploy.yml` action will build and deploy these scripts on each push to the `main` branch. The entrypoint script will be available at `<YOUR-GITHUB-PAGES-URL>/lib/index.js` where `<YOUR-GITHUB-PAGES-URL>` represents something like `https://username.github.io/cisco-hubs-scripts`.
 
@@ -69,3 +70,19 @@ To enable Hue Light notifications:
 3. Copy the key shown
 4. Paste this key in the "IFTTT key" field in Hubs
 5. Check the "Enable Lights" box
+
+In your IFTTT app, configure two applets:
+
+**Applet 1**
+
+- IF "Receive a web request" (Event name "hue_brightness")
+- THEN "Dim Lights (Phillips Hue)"
+- Select your Hue Light
+- In the "Brightness" field click "Add Ingredient" > "Value1"
+
+**Applet 2**
+
+- IF "Receive a web request" (Event name "hue_brightness")
+- THEN "Change color (Phillips Hue)"
+- Select your Hue Light
+- In the "Color value or name" field click "Add Ingredient" > "Value1"
