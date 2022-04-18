@@ -101,7 +101,7 @@ export function ConfigPanel() {
   )
 }
 
-const SERVER_URL = import.meta.env.DEV ? "https://matt-backend.ngrok.io/" : "https://cisco-trello-server.herokuapp.com/"
+const SERVER_URL = import.meta.env.VITE_TRELLO_SERVER
 
 async function requestToken() {
   return new Promise((resolve) => {

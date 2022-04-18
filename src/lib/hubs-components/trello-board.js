@@ -4,7 +4,7 @@ import { Trello } from "@/lib/react/Trello"
 import "./web-layer"
 import "./web-layer-events"
 
-const SERVER_URL = import.meta.env.DEV ? "https://matt-backend.ngrok.io/" : "https://cisco-trello-server.herokuapp.com/"
+const SERVER_URL = import.meta.env.VITE_TRELLO_SERVER
 console.log("Using trello server at", SERVER_URL)
 
 AFRAME.registerSystem("trello", {
