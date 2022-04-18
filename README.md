@@ -34,7 +34,7 @@ Our entrypoint script is hosted at https://www.aelatgt.org/cisco-hubs-scripts/li
 
 ## Script Usage
 
-1. Create a Hubs room
+1. Create a compatible Hubs room [(example scene here)](https://hubs.aelatgt.net/scenes/YqPsYEP/cisco-workspace-spoke)
 2. Click "More" > "Room Info and Settings" > "Edit"
 3. Paste the entrypoint script URL in the "Custom Script" field
 4. Apply and reload the room
@@ -43,7 +43,7 @@ Our entrypoint script is hosted at https://www.aelatgt.org/cisco-hubs-scripts/li
 
 You can paste or drag a Trello board URL into the room for a view-only representation of the realtime board data. The board can be positioned and pinned like other room objects.
 
-To enable this feature, you first need to authenticate by clicking "Log in to Trello" in the configuration panel in the top left.
+To enable this feature, you first need to authenticate by clicking "Log in to Trello" in the configuration panel in the top left. Note that Hubs users can only view boards that their Trello account has permission to access.
 
 ### Excalidraw
 
@@ -59,7 +59,7 @@ You may need to move your cursor around to find the center of the board in Hubs
 
 ## Presence (Web Notifications and Hue Lights)
 
-Presence notifications require specific components in the scene which define zone boundaries. Specifically, you need an entity with `presence-zone="type:social"` and one with `presence-zone="type:meeting"`. The scale and position of those entities determine the axis-aligned bounding box for each trigger zone.
+Presence notifications require specific components in the scene which define zone boundaries. Specifically, you need an entity with `presence-zone="type:social"` and one with `presence-zone="type:meeting"`. The scale and position of those entities determine the axis-aligned bounding box for each trigger zone. The [sample scene](https://hubs.aelatgt.net/scenes/YqPsYEP/cisco-workspace-spoke) includes these components.
 
 To enable web notifications, check the "Web Notifications" box in the upper left config panel.
 
